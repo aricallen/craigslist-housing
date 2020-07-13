@@ -50,6 +50,7 @@ const parseResult = ($result) => {
 
 const updateDb = (posts) => {
   const prevDb = getDb();
+  console.log('getting prev db...', JSON.stringify(posts.map((p) => p.title)));
   const uniquePosts = uniqBy([...prevDb, ...posts], (p) => p.title);
   fs.writeFileSync(DB_FILE_PATH, JSON.stringify(uniquePosts, null, 2), 'utf8');
 };
@@ -69,7 +70,8 @@ const notifyAboutNewPosts = (posts) => {
     if (index > 1) return;
     const href = hrefs[index];
     if (href) {
-      await axios.post(SLACK_WEBHOOK_URL, { text: href, unfurl_links: true });
+      const text = `@celeste @aric ${href}`;
+      await axios.post(SLACK_WEBHOOK_URL, { text, unfurl_links: true });
       console.log('notifying about: ', href);
       setTimeout(() => {
         _notify(index + 1);
@@ -95,6 +97,7 @@ const run = async () => {
   updateDb(parsed);
   const newPosts = getNewPosts(lastDayPosts);
   notifyAboutNewPosts(newPosts);
+  console.log(`added ${newPosts.length} posts`);
   console.log('last updated: ', new Date(now).toISOString());
 };
 
