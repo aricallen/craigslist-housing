@@ -2,6 +2,7 @@ const fs = require('fs');
 const cheerio = require('cheerio');
 const { uniqBy } = require('lodash');
 const axios = require('axios');
+const path = require('path');
 
 const url =
   'https://sfbay.craigslist.org/search/apa?search_distance=10&postal=94563&max_price=5000&availabilityMode=0&pets_dog=1&housing_type=6&sale_date=all+dates';
@@ -16,14 +17,14 @@ const selectors = {
 
 const SLACK_WEBHOOK_URL =
   'https://hooks.slack.com/services/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';
-const DB_FILE_PATH = './data/db.json';
+const DB_FILE_PATH = path.join(__dirname, 'data/db.json');
 const INTERVAL = 1000 * 60 * 5; // 5 mins
 
 // fs.unlinkSync(DB_FILE_PATH);
 
-const output = (parsed) => {
-  fs.writeFileSync('output.json', JSON.stringify(parsed, null, 2), 'utf8');
-};
+// const output = (parsed) => {
+//   fs.writeFileSync('output.json', JSON.stringify(parsed, null, 2), 'utf8');
+// };
 
 if (fs.existsSync(DB_FILE_PATH) === false) {
   fs.writeFileSync(DB_FILE_PATH, '', 'utf8');
@@ -96,7 +97,6 @@ const run = async () => {
     const postTimestamp = new Date(result.date).getTime();
     return postTimestamp > threshold;
   });
-  output(lastDayPosts);
   const newPosts = getNewPosts(lastDayPosts);
   updateDb([...lastDayPosts, ...newPosts]);
   notifyAboutNewPosts(newPosts);
