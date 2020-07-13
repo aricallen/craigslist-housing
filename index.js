@@ -22,7 +22,7 @@ const INTERVAL = 1000 * 60 * 5; // 5 mins
 
 if (fs.existsSync(DB_FILE_PATH) === false) {
   fs.mkdirSync('data');
-  fs.writeFileSync(DB_FILE_PATH, '[]', 'utf8');
+  // fs.writeFileSync(DB_FILE_PATH, '[]', 'utf8');
 }
 
 const getDb = () => {
@@ -94,8 +94,8 @@ const run = async () => {
     const postTimestamp = new Date(result.date).getTime();
     return postTimestamp > threshold;
   });
-  updateDb(parsed);
   const newPosts = getNewPosts(lastDayPosts);
+  updateDb([...lastDayPosts, ...newPosts]);
   notifyAboutNewPosts(newPosts);
   console.log(`added ${newPosts.length} posts`);
   console.log('last updated: ', new Date(now).toISOString());
