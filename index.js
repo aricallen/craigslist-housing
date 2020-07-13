@@ -35,6 +35,7 @@ const getDb = () => {
     const db = JSON.parse(dbStr);
     return db;
   } catch (err) {
+    console.error(err);
     return [];
   }
 };
