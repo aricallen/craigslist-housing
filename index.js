@@ -21,6 +21,7 @@ const DB_FILE_PATH = path.join(__dirname, 'data/db.json');
 const INTERVAL = 1000 * 60 * 5; // 5 mins
 
 if (fs.existsSync(DB_FILE_PATH) === false) {
+  fs.mkdirSync('data');
   fs.writeFileSync(DB_FILE_PATH, '[]', 'utf8');
 }
 
