@@ -14,9 +14,10 @@ const selectors = {
   infoRow: '.result-info',
 };
 
-const SLACK_WEBHOOK_URL = 'https://hooks.slack.com/services/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';
-
+const SLACK_WEBHOOK_URL =
+  'https://hooks.slack.com/services/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';
 const DB_FILE_PATH = 'data/db.json';
+const INTERVAL = 1000 * 60 * 5; // 5 mins
 
 fs.unlinkSync(DB_FILE_PATH);
 
@@ -71,11 +72,11 @@ const notifyAboutNewPosts = (posts) => {
   const _notify = async (index = 0) => {
     const href = hrefs[index];
     if (href) {
-      // await fetch({
-      //   url: SLACK_WEBHOOK_URL,
-      //   method: 'POST',
-      //   body: JSON.stringify({ text: href }),
-      // });
+      await fetch({
+        url: SLACK_WEBHOOK_URL,
+        method: 'POST',
+        body: JSON.stringify({ text: href }),
+      });
       console.log('notifying about: ', href);
       _notify(index + 1);
     }
@@ -103,3 +104,4 @@ const run = async () => {
 };
 
 run();
+setInterval(run, INTERVAL);
