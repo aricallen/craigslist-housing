@@ -74,8 +74,7 @@ const notifyAboutNewPosts = (posts) => {
   const _notify = async (index = 0) => {
     const href = hrefs[index];
     if (href) {
-      const text = `@celeste @aric ${href}`;
-      await axios.post(SLACK_WEBHOOK_URL, { text, unfurl_links: true });
+      await axios.post(SLACK_WEBHOOK_URL, { text: href, unfurl_links: true });
       console.log('notifying about: ', href);
       setTimeout(() => {
         _notify(index + 1);
