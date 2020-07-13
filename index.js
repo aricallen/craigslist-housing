@@ -25,17 +25,16 @@ const output = (parsed) => {
   fs.writeFileSync('output.json', JSON.stringify(parsed, null, 2), 'utf8');
 };
 
+if (fs.existsSync(DB_FILE_PATH) === false) {
+  fs.writeFileSync(DB_FILE_PATH, '', 'utf8');
+}
+
 const getDb = () => {
-  if (fs.existsSync(DB_FILE_PATH)) {
-    const dbStr = fs.readFileSync(DB_FILE_PATH, 'utf8');
-    try {
-      const db = JSON.parse(dbStr);
-      return db;
-    } catch (err) {
-      return [];
-    }
-  } else {
-    fs.writeFileSync(DB_FILE_PATH, '[]', 'utf8');
+  const dbStr = fs.readFileSync(DB_FILE_PATH, 'utf8');
+  try {
+    const db = JSON.parse(dbStr);
+    return db;
+  } catch (err) {
     return [];
   }
 };
