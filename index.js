@@ -1,6 +1,7 @@
 const fs = require('fs');
 const cheerio = require('cheerio');
 const fetch = require('node-fetch');
+const { uniqBy } = require('lodash');
 
 const url =
   'https://sfbay.craigslist.org/search/apa?search_distance=10&postal=94563&availabilityMode=0&pets_dog=1&housing_type=6&sale_date=all+dates';
@@ -13,8 +14,16 @@ const selectors = {
   infoRow: '.result-info',
 };
 
+const DB_FILE_PATH = 'data/db.json';
+
 const output = (parsed) => {
   fs.writeFileSync('output.json', JSON.stringify(parsed, null, 2), 'utf8');
+};
+
+const getDb = () => {
+  const dbStr = fs.readFileSync(DB_FILE_PATH, 'utf8');
+  const db = JSON.parse(dbStr);
+  return db;
 };
 
 const parseResult = ($result) => {
@@ -30,20 +39,39 @@ const parseResult = ($result) => {
   return { title, date, price, location: location || 'Not specified', href };
 };
 
+const updateDb = (posts) => {
+  const prevDb = getDb();
+  const uniquePosts = uniqBy([...prevDb, ...posts], (p) => p.title);
+  fs.writeFileSync(DB_FILE_PATH, JSON.stringify(uniquePosts, null, 2), 'utf8');
+};
+
+const getNewPosts = (fetchedPosts) => {
+  const db = getDb();
+  const fetchedTitles = fetchedPosts.map((post) => post.title);
+  return fetchedTitles.filter((title) => db.includes(title) === false);
+};
+
+const notifyAboutNewPosts = (posts) => {
+  // send to slack each href
+};
+
 const run = async () => {
   const response = await fetch(url);
   const text = await response.text();
   const $ = cheerio.load(text);
   const $results = $(selectors.infoRow);
   const parsed = $results.map((i, el) => parseResult($(el))).toArray();
-  const filtered = parsed.filter((result) => {
+  const lastDayPosts = parsed.filter((result) => {
     const now = Date.now();
     const milliOneDay = 1000 * 60 * 60 * 24;
     const threshold = now - milliOneDay;
     const postTimestamp = new Date(result.date).getTime();
     return postTimestamp > threshold;
   });
-  output(filtered);
+  output(lastDayPosts);
+  updateDb(lastDayPosts);
+  const newPosts = getNewPosts(lastDayPosts);
+  notifyAboutNewPosts(newPosts);
 };
 
 run();
