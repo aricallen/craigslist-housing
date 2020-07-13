@@ -89,8 +89,8 @@ const run = async () => {
   const $ = cheerio.load(text);
   const $results = $(selectors.infoRow);
   const parsed = $results.map((i, el) => parseResult($(el))).toArray();
+  const now = Date.now();
   const lastDayPosts = parsed.filter((result) => {
-    const now = Date.now();
     const milliOneDay = 1000 * 60 * 60 * 24;
     const threshold = now - milliOneDay;
     const postTimestamp = new Date(result.date).getTime();
@@ -100,6 +100,7 @@ const run = async () => {
   const newPosts = getNewPosts(lastDayPosts);
   updateDb([...lastDayPosts, ...newPosts]);
   notifyAboutNewPosts(newPosts);
+  console.log('last updated: ', new Date(now).toISOString());
 };
 
 run();
