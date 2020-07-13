@@ -14,16 +14,28 @@ const selectors = {
   infoRow: '.result-info',
 };
 
+const SLACK_WEBHOOK_URL = 'https://hooks.slack.com/services/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';
+
 const DB_FILE_PATH = 'data/db.json';
+
+fs.unlinkSync(DB_FILE_PATH);
 
 const output = (parsed) => {
   fs.writeFileSync('output.json', JSON.stringify(parsed, null, 2), 'utf8');
 };
 
 const getDb = () => {
-  const dbStr = fs.readFileSync(DB_FILE_PATH, 'utf8');
-  const db = JSON.parse(dbStr);
-  return db;
+  if (fs.existsSync(DB_FILE_PATH)) {
+    const dbStr = fs.readFileSync(DB_FILE_PATH, 'utf8');
+    try {
+      const db = JSON.parse(dbStr);
+      return db;
+    } catch (err) {
+      return [];
+    }
+  }
+  fs.writeFileSync(DB_FILE_PATH, '[]', 'utf8');
+  return [];
 };
 
 const parseResult = ($result) => {
@@ -47,12 +59,28 @@ const updateDb = (posts) => {
 
 const getNewPosts = (fetchedPosts) => {
   const db = getDb();
-  const fetchedTitles = fetchedPosts.map((post) => post.title);
-  return fetchedTitles.filter((title) => db.includes(title) === false);
+  const prevTitles = db.map((post) => post.title);
+  return fetchedPosts.filter((post) => {
+    return prevTitles.includes(post.title) === false;
+  });
 };
 
 const notifyAboutNewPosts = (posts) => {
   // send to slack each href
+  const hrefs = posts.map((post) => post.href);
+  const _notify = async (index = 0) => {
+    const href = hrefs[index];
+    if (href) {
+      // await fetch({
+      //   url: SLACK_WEBHOOK_URL,
+      //   method: 'POST',
+      //   body: JSON.stringify({ text: href }),
+      // });
+      console.log('notifying about: ', href);
+      _notify(index + 1);
+    }
+  };
+  _notify();
 };
 
 const run = async () => {
@@ -69,8 +97,8 @@ const run = async () => {
     return postTimestamp > threshold;
   });
   output(lastDayPosts);
-  updateDb(lastDayPosts);
   const newPosts = getNewPosts(lastDayPosts);
+  updateDb([...lastDayPosts, ...newPosts]);
   notifyAboutNewPosts(newPosts);
 };
 
