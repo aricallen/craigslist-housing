@@ -97,8 +97,8 @@ const run = async () => {
     const postTimestamp = new Date(result.date).getTime();
     return postTimestamp > threshold;
   });
+  updateDb(parsed);
   const newPosts = getNewPosts(lastDayPosts);
-  updateDb([...lastDayPosts, ...newPosts]);
   notifyAboutNewPosts(newPosts);
   console.log('last updated: ', new Date(now).toISOString());
 };
