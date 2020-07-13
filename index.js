@@ -67,7 +67,6 @@ const notifyAboutNewPosts = (posts) => {
   // send to slack each href
   const hrefs = posts.map((post) => post.href);
   const _notify = async (index = 0) => {
-    if (index > 1) return;
     const href = hrefs[index];
     if (href) {
       const text = `@celeste @aric ${href}`;
