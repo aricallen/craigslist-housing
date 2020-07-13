@@ -34,9 +34,10 @@ const getDb = () => {
     } catch (err) {
       return [];
     }
+  } else {
+    fs.writeFileSync(DB_FILE_PATH, '[]', 'utf8');
+    return [];
   }
-  fs.writeFileSync(DB_FILE_PATH, '[]', 'utf8');
-  return [];
 };
 
 const parseResult = ($result) => {
