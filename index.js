@@ -16,7 +16,7 @@ const selectors = {
 
 const SLACK_WEBHOOK_URL =
   'https://hooks.slack.com/services/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';
-const DB_FILE_PATH = 'data/db.json';
+const DB_FILE_PATH = './data/db.json';
 const INTERVAL = 1000 * 60 * 5; // 5 mins
 
 // fs.unlinkSync(DB_FILE_PATH);
