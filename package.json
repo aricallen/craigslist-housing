@@ -24,7 +24,11 @@
     "tape": "^5.0.1",
     "tape-watch": "^2.3.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "node-craigslist": "^2.2.0",
+    "node-fetch": "^2.6.0"
+  },
   "engines": {
     "node": ">=10.4.1"
   },
