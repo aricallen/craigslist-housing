@@ -19,7 +19,7 @@ const SLACK_WEBHOOK_URL =
 const DB_FILE_PATH = 'data/db.json';
 const INTERVAL = 1000 * 60 * 5; // 5 mins
 
-fs.unlinkSync(DB_FILE_PATH);
+// fs.unlinkSync(DB_FILE_PATH);
 
 const output = (parsed) => {
   fs.writeFileSync('output.json', JSON.stringify(parsed, null, 2), 'utf8');
