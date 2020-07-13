@@ -1,10 +1,10 @@
 const fs = require('fs');
 const cheerio = require('cheerio');
-const fetch = require('node-fetch');
 const { uniqBy } = require('lodash');
+const axios = require('axios');
 
 const url =
-  'https://sfbay.craigslist.org/search/apa?search_distance=10&postal=94563&availabilityMode=0&pets_dog=1&housing_type=6&sale_date=all+dates';
+  'https://sfbay.craigslist.org/search/apa?search_distance=10&postal=94563&max_price=5000&availabilityMode=0&pets_dog=1&housing_type=6&sale_date=all+dates';
 
 const selectors = {
   title: '.result-title',
@@ -70,23 +70,22 @@ const notifyAboutNewPosts = (posts) => {
   // send to slack each href
   const hrefs = posts.map((post) => post.href);
   const _notify = async (index = 0) => {
+    if (index > 1) return;
     const href = hrefs[index];
     if (href) {
-      await fetch({
-        url: SLACK_WEBHOOK_URL,
-        method: 'POST',
-        body: JSON.stringify({ text: href }),
-      });
+      await axios.post(SLACK_WEBHOOK_URL, { text: href, unfurl_links: true });
       console.log('notifying about: ', href);
-      _notify(index + 1);
+      setTimeout(() => {
+        _notify(index + 1);
+      }, 5000);
     }
   };
   _notify();
 };
 
 const run = async () => {
-  const response = await fetch(url);
-  const text = await response.text();
+  const response = await axios.get(url);
+  const text = await response.data;
   const $ = cheerio.load(text);
   const $results = $(selectors.infoRow);
   const parsed = $results.map((i, el) => parseResult($(el))).toArray();

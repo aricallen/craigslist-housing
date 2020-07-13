@@ -25,6 +25,7 @@
     "tape-watch": "^2.3.0"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "cheerio": "^1.0.0-rc.3",
     "lodash": "^4.17.19",
     "node-craigslist": "^2.2.0",
