@@ -25,7 +25,11 @@ if (fs.existsSync(DB_FILE_PATH)) {
 }
 
 if (fs.existsSync(DB_FILE_PATH) === false) {
-  fs.mkdirSync('data');
+  try {
+    fs.mkdirSync('data');
+  } catch (err) {
+    console.log(err);
+  }
   fs.writeFileSync(DB_FILE_PATH, '', 'utf8');
 }
 
