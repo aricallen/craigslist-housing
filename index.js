@@ -4,8 +4,9 @@ const { uniqBy } = require('lodash');
 const axios = require('axios');
 const path = require('path');
 
-const url =
-  'https://sfbay.craigslist.org/search/apa?search_distance=10&postal=94563&max_price=5000&availabilityMode=0&pets_dog=1&housing_type=6&sale_date=all+dates';
+const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+
+const url = `https://sfbay.craigslist.org/search/apa?search_distance=${config.searchDistance}&postal=${config.zipCode}&max_price=${config.maxPrice}&availabilityMode=0&pets_dog=1&housing_type=${config.houseType}&sale_date=all+dates`;
 
 const selectors = {
   title: '.result-title',
@@ -15,8 +16,7 @@ const selectors = {
   infoRow: '.result-info',
 };
 
-const SLACK_WEBHOOK_URL =
-  'https://hooks.slack.com/services/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';
+const SLACK_WEBHOOK_URL = config.webhook;
 const DB_FILE_PATH = path.join(__dirname, 'data/db.json');
 const INTERVAL = 1000 * 60 * 5; // 5 mins
 

@@ -1,4 +1,11 @@
 # Craigslist
 
-https://sfbay.craigslist.org/search/apa?search_distance=10&postal=94563&availabilityMode=0&pets_dog=1&housing_type=6&sale_date=all+dates
+## Usage
+
+Update `config.json` with parameters to search with. Run the script somewhere it can reach the internet.
+
+```sh
+yarn start
+```
+
 

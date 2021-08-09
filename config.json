@@ -1,0 +1,7 @@
+{
+  "zipCode": 94596,
+  "houseType": 6,
+  "searchDistance": 10,
+  "maxPrice": 5000,
+  "webhook": "https://hooks.slack.com/services/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"
+}
